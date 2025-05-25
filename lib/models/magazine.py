@@ -49,3 +49,17 @@ class Magazine:
 
   def article_titles(self):
     return [article.title for article in self.articles()]
+  
+  def contributing_authors(self):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+      SELECT a.author_id, COUNT(*) as count, au.name FROM articles a
+      JOIN authors au ON au.id = a.author_id
+      WHERE a.magazine_id = ?
+      GROUP BY a.author_id
+      HAVING count > 2
+    """, (self.id,))
+    results = cursor.fetchall()
+    conn.close()
+    return [Author(id=row['author_id'], name=row['name']) for row in results] 
