@@ -17,3 +17,21 @@ class Article:
     self.id = cursor.lastrowid
     conn.commit()
     conn.close()
+
+  @classmethod
+  def find_by_author(cls, author_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM articles WHERE author_id = ?", (author_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [cls(**row) for row in rows]
+
+  @classmethod
+  def find_by_magazine(cls, magazine_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM articles WHERE magazine_id = ?", (magazine_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [cls(**row) for row in rows]
