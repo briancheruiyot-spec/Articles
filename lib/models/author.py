@@ -14,3 +14,12 @@ class Author:
     self.id = cursor.lastrowid
     conn.commit()
     conn.close()
+
+  @classmethod
+  def find_by_id(cls, id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM authors WHERE id = ?", (id,))
+    row = cursor.fetchone()
+    conn.close()
+    return cls(**row) if row else None
