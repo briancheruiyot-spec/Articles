@@ -23,3 +23,14 @@ class Author:
     row = cursor.fetchone()
     conn.close()
     return cls(**row) if row else None
+  
+  def articles(self):
+    return Article.find_by_author(self.id)
+
+  def magazines(self):
+    return Magazine.find_by_author(self.id)
+
+  def add_article(self, magazine, title):
+    article = Article(title=title, author_id=self.id, magazine_id=magazine.id)
+    article.save()
+    return article
