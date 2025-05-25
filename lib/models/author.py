@@ -34,3 +34,15 @@ class Author:
     article = Article(title=title, author_id=self.id, magazine_id=magazine.id)
     article.save()
     return article
+  
+  def topic_areas(self):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+      SELECT DISTINCT m.category FROM magazines m
+      JOIN articles a ON a.magazine_id = m.id
+      WHERE a.author_id = ?
+    """, (self.id,))
+    results = cursor.fetchall()
+    conn.close()
+    return [row['category'] for row in results]
