@@ -34,3 +34,18 @@ class Magazine:
 
   def articles(self):
     return Article.find_by_magazine(self.id)
+  
+  def contributors(self):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+      SELECT DISTINCT au.* FROM authors au
+      JOIN articles a ON au.id = a.author_id
+      WHERE a.magazine_id = ?
+    """, (self.id,))
+    results = cursor.fetchall()
+    conn.close()
+    return [Author(**row) for row in results]
+
+  def article_titles(self):
+    return [article.title for article in self.articles()]
