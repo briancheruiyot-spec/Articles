@@ -6,3 +6,11 @@ class Author:
   def __init__(self, id=None, name=None):
     self.id = id
     self.name = name
+
+  def save(self):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO authors (name) VALUES (?)", (self.name,))
+    self.id = cursor.lastrowid
+    conn.commit()
+    conn.close()
