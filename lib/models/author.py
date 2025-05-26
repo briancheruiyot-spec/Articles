@@ -1,6 +1,4 @@
 from lib.db.connection import get_connection
-from lib.models.article import Article
-from lib.models.magazine import Magazine
 
 class Author:
   def __init__(self, id=None, name=None):
@@ -23,18 +21,21 @@ class Author:
     row = cursor.fetchone()
     conn.close()
     return cls(**row) if row else None
-  
+
   def articles(self):
+    from lib.models.article import Article
     return Article.find_by_author(self.id)
 
   def magazines(self):
+    from lib.models.magazine import Magazine
     return Magazine.find_by_author(self.id)
 
   def add_article(self, magazine, title):
+    from lib.models.article import Article
     article = Article(title=title, author_id=self.id, magazine_id=magazine.id)
     article.save()
     return article
-  
+
   def topic_areas(self):
     conn = get_connection()
     cursor = conn.cursor()

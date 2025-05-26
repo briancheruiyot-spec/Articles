@@ -1,6 +1,4 @@
 from lib.db.connection import get_connection
-from lib.models.article import Article
-from lib.models.author import Author
 
 class Magazine:
   def __init__(self, id=None, name=None, category=None):
@@ -17,7 +15,7 @@ class Magazine:
     )
     self.id = cursor.lastrowid
     conn.commit()
-    conn.close() 
+    conn.close()
 
   @classmethod
   def find_by_author(cls, author_id):
@@ -33,9 +31,11 @@ class Magazine:
     return [cls(**row) for row in rows]
 
   def articles(self):
+    from lib.models.article import Article
     return Article.find_by_magazine(self.id)
-  
+
   def contributors(self):
+    from lib.models.author import Author
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -49,8 +49,9 @@ class Magazine:
 
   def article_titles(self):
     return [article.title for article in self.articles()]
-  
+
   def contributing_authors(self):
+    from lib.models.author import Author
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -62,4 +63,4 @@ class Magazine:
     """, (self.id,))
     results = cursor.fetchall()
     conn.close()
-    return [Author(id=row['author_id'], name=row['name']) for row in results] 
+    return [Author(id=row['author_id'], name=row['name']) for row in results]
